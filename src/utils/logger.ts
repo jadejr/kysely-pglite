@@ -1,5 +1,5 @@
 import consola from 'consola'
-import { Logger } from 'kysely-codegen'
+import { Logger, getLogLevelNumber } from 'kysely-codegen'
 
 export const enum LogLevel {
   SILENT = 0,
@@ -11,25 +11,25 @@ export const enum LogLevel {
 
 export class CodegenLogger extends Logger {
   debug(...values: [unknown, unknown]) {
-    if (this.logLevel >= LogLevel.DEBUG) {
+    if (getLogLevelNumber(this.logLevel) >= LogLevel.DEBUG) {
       consola.debug(...values)
     }
   }
 
   error(...values: [unknown, unknown]) {
-    if (this.logLevel >= LogLevel.ERROR) {
+    if (getLogLevelNumber(this.logLevel) >= LogLevel.ERROR) {
       consola.error(...values)
     }
   }
 
   info(...values: [unknown, unknown]) {
-    if (this.logLevel >= LogLevel.INFO) {
+    if (getLogLevelNumber(this.logLevel) >= LogLevel.INFO) {
       consola.info(...values)
     }
   }
 
   log(...values: [unknown, unknown]): void {
-    if (this.logLevel >= LogLevel.INFO) {
+    if (getLogLevelNumber(this.logLevel) >= LogLevel.INFO) {
       consola.log(...values)
     }
   }

@@ -63,7 +63,7 @@
     "fs-extra": "^11.3.0",
     "globby": "^14.1.0",
     "jiti": "^2.4.2",
-    "kysely-codegen": "^0.15.0",
+    "kysely-codegen": "^0.18.3",
     "radash": "^12.1.0"
   },
   "bin": {
