@@ -32,15 +32,16 @@ import { KyselyPGlite } from 'kysely-pglite'
 const { dialect } = await KyselyPGlite.create()
 
 // For persisting the data to disk, pass in a path to a directory
-// const { dialect } = await KyselyPGlite.create('./path/to/pgdata')
+// const { dialect } = await KyselyPGlite.create({ dataDir: './path/to/pgdata' })
 
 const db = new Kysely<any>({ dialect })
 ```
 
-`PGlite` options can be passed in, it has the same function signature as PGlite. See [PGlite options](https://pglite.dev/docs/api#options) for more info.
+`PGlite` options can be passed in alongside the dataDir. It has the same function signature as PGlite. See [PGlite options](https://pglite.dev/docs/api#options) for more info.
 
 ```typescript
-const { dialect } = await KyselyPGlite.create('./path/to/pgdata', {
+const { dialect } = await KyselyPGlite.create(
+  dataDir: './path/to/pgdata',
   debug: 3,
   relaxedDurability: true,
 })

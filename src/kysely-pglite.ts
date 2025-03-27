@@ -1,10 +1,10 @@
-import { ensureDataDirExist } from '#utils/create-kysely.js'
 import {
   PGlite,
   PGliteInterfaceExtensions,
   type PGliteOptions,
 } from '@electric-sql/pglite'
 import { isObject, isString } from '@sindresorhus/is'
+import fs from 'fs-extra'
 import {
   Kysely,
   PostgresAdapter,
@@ -19,37 +19,17 @@ export class KyselyPGlite<O extends PGliteOptions = PGliteOptions> {
 
   /**
    * Create a new KyselyPGlite instance.
-   * @param dataDir The directory to store the database files.
-   *                - A string with `idb://` prefix to use IndexedDB filesystem in the browser
-   *                - `memory://` to use in-memory filesystem
-   *                - A path to a local filesystem directory
-   * @param options `PGliteOptions` options
+   * @param options `PGliteOptions` or `PGlite
    */
-
-  constructor(dataDir?: string, opts?: O)
-  constructor(options?: O)
-  constructor(client?: PGlite)
-  constructor(dataDirOrOptionsOrPGlite?: string | PGlite | O, opts?: O) {
-    ensureDataDirExist(dataDirOrOptionsOrPGlite)
-
-    let options: PGliteOptions = { ...opts }
-
-    if (
-      isObject(dataDirOrOptionsOrPGlite) &&
-      dataDirOrOptionsOrPGlite instanceof PGlite
-    ) {
-      // @ts-expect-error
-      this.client = dataDirOrOptionsOrPGlite
-      return
+  constructor(options?: PGlite | O) {
+    if (options?.dataDir && isString(options.dataDir)) {
+      fs.ensureDirSync(options.dataDir)
     }
 
-    if (isString(dataDirOrOptionsOrPGlite)) {
-      options = {
-        dataDir: dataDirOrOptionsOrPGlite,
-        ...options,
-      }
-    } else {
-      options = dataDirOrOptionsOrPGlite ?? {}
+    if (isObject(options) && options instanceof PGlite) {
+      // @ts-expect-error
+      this.client = options
+      return
     }
 
     // @ts-expect-error
@@ -57,26 +37,9 @@ export class KyselyPGlite<O extends PGliteOptions = PGliteOptions> {
   }
 
   static async create<O extends PGliteOptions>(
-    options?: O,
-  ): Promise<KyselyPGlite<O>>
-
-  static async create<O extends PGliteOptions>(
-    dataDir?: string,
-    options?: O,
-  ): Promise<KyselyPGlite<O>>
-
-  static async create<O extends PGliteOptions>(
-    dataDirOrPGliteOptions?: string | O,
-    options?: O,
+    options?: PGlite | O,
   ): Promise<KyselyPGlite<O>> {
-    const resolvedOpts: PGliteOptions = isString(dataDirOrPGliteOptions)
-      ? {
-          dataDir: dataDirOrPGliteOptions,
-          ...(options ?? {}),
-        }
-      : (dataDirOrPGliteOptions ?? {})
-
-    const pg = await PGlite.create(resolvedOpts)
+    const pg = await PGlite.create(options)
     return new KyselyPGlite<O>(pg) as any
   }
 
