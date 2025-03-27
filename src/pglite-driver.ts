@@ -1,4 +1,5 @@
 import { PGlite } from '@electric-sql/pglite'
+import { isFunction } from '@sindresorhus/is'
 import {
   CompiledQuery,
   type DatabaseConnection,
@@ -6,11 +7,20 @@ import {
   type TransactionSettings,
 } from 'kysely'
 
-export class PGliteDriver {
-  #client: PGlite
+import { PGliteDialectConfig } from './pglite-dialect-config.js'
 
-  constructor(client: PGlite) {
-    this.#client = client
+export class PGliteDriver {
+  readonly #config: PGliteDialectConfig
+  #client!: PGlite
+
+  constructor(config: PGliteDialectConfig) {
+    this.#config = config
+  }
+
+  async init(): Promise<void> {
+    this.#client = isFunction(this.#config.PGlite)
+      ? await this.#config.PGlite()
+      : this.#config.PGlite
   }
 
   async acquireConnection(): Promise<DatabaseConnection> {
@@ -36,7 +46,6 @@ export class PGliteDriver {
     await this.#client.close()
   }
 
-  async init(): Promise<void> {}
   async releaseConnection(_connection: DatabaseConnection): Promise<void> {}
 }
 

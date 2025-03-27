@@ -46,7 +46,7 @@ export class KyselyPGlite<O extends PGliteOptions = PGliteOptions> {
   dialect: Dialect = {
     createAdapter: () => new PostgresAdapter(),
 
-    createDriver: () => new PGliteDriver(this.client),
+    createDriver: () => new PGliteDriver({ PGlite: this.client }),
 
     createIntrospector: (db: Kysely<any>) => new PostgresIntrospector(db),
 
