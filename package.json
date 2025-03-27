@@ -42,7 +42,7 @@
   },
   "peerDependencies": {
     "@electric-sql/pglite": "*",
-    "kysely": "*"
+    "kysely": "https://pkg.pr.new/kysely-org/kysely/kysely@2b7007e"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
