@@ -18,9 +18,15 @@ export class PGliteDriver {
   }
 
   async init(): Promise<void> {
-    this.#client = isFunction(this.#config.PGlite)
-      ? await this.#config.PGlite()
-      : this.#config.PGlite
+    if (this.#config.PGlite instanceof PGlite) {
+      this.#client = this.#config.PGlite
+      return
+    }
+    if (isFunction(this.#config.PGlite)) {
+      this.#client = await this.#config.PGlite(this.#config.PGliteOptions)
+      return
+    }
+    this.#client = new PGlite(this.#config.PGliteOptions)
   }
 
   async acquireConnection(): Promise<DatabaseConnection> {
