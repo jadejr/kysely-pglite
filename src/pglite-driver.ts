@@ -3,11 +3,14 @@ import { isFunction } from '@sindresorhus/is'
 import {
   CompiledQuery,
   type DatabaseConnection,
+  type QueryCompiler,
   type QueryResult,
   type TransactionSettings,
+  createQueryId,
 } from 'kysely'
 
 import { PGliteDialectConfig } from './pglite-dialect-config.js'
+import { parseSavepointCommand } from './parser/savepoint-parser.js'
 
 export class PGliteDriver {
   readonly #config: PGliteDialectConfig
@@ -49,9 +52,23 @@ export class PGliteDriver {
 
   async beginTransaction(
     connection: DatabaseConnection,
-    _settings: TransactionSettings,
+    settings: TransactionSettings,
   ): Promise<void> {
-    await connection.executeQuery(CompiledQuery.raw('BEGIN'))
+    if (settings.isolationLevel || settings.accessMode) {
+      let sql = 'START TRANSACTION'
+
+      if (settings.isolationLevel) {
+        sql += ` ISOLATION LEVEL ${settings.isolationLevel}`
+      }
+
+      if (settings.accessMode) {
+        sql += ` ${settings.accessMode}`
+      }
+
+      await connection.executeQuery(CompiledQuery.raw(sql))
+    } else {
+      await connection.executeQuery(CompiledQuery.raw('BEGIN'))
+    }
   }
 
   async commitTransaction(connection: DatabaseConnection): Promise<void> {
@@ -60,6 +77,45 @@ export class PGliteDriver {
 
   async rollbackTransaction(connection: DatabaseConnection): Promise<void> {
     await connection.executeQuery(CompiledQuery.raw('ROLLBACK'))
+  }
+
+  async savepoint(
+    connection: DatabaseConnection,
+    savepointName: string,
+    compileQuery: QueryCompiler['compileQuery'],
+  ): Promise<void> {
+    await connection.executeQuery(
+      compileQuery(
+        parseSavepointCommand('savepoint', savepointName),
+        createQueryId(),
+      ),
+    )
+  }
+
+  async rollbackToSavepoint(
+    connection: DatabaseConnection,
+    savepointName: string,
+    compileQuery: QueryCompiler['compileQuery'],
+  ): Promise<void> {
+    await connection.executeQuery(
+      compileQuery(
+        parseSavepointCommand('rollback to', savepointName),
+        createQueryId(),
+      ),
+    )
+  }
+
+  async releaseSavepoint(
+    connection: DatabaseConnection,
+    savepointName: string,
+    compileQuery: QueryCompiler['compileQuery'],
+  ): Promise<void> {
+    await connection.executeQuery(
+      compileQuery(
+        parseSavepointCommand('release', savepointName),
+        createQueryId(),
+      ),
+    )
   }
 
   async destroy(): Promise<void> {
