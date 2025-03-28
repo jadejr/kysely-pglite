@@ -1,3 +1,5 @@
+export { PGliteDialect } from './pglite-dialect.js'
+
 export { KyselyPGlite } from './kysely-pglite.js'
 
 export { KyselyLive } from './kysely-live.js'
