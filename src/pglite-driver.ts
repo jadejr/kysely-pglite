@@ -135,9 +135,19 @@ export class PGliteConnection implements DatabaseConnection {
   async executeQuery<R>(
     compiledQuery: CompiledQuery<any>,
   ): Promise<QueryResult<R>> {
-    return await this.#client.query<R>(compiledQuery.sql, [
+    const res = await this.#client.query<R>(compiledQuery.sql, [
       ...compiledQuery.parameters,
     ])
+    const numAffectedRows = res.affectedRows
+      ? BigInt(res.affectedRows)
+      : undefined
+    // Remove affectedRows from the result, since it's not part of the standard QueryResult
+    delete res.affectedRows
+
+    return {
+      ...res,
+      numAffectedRows,
+    }
   }
 
   async *streamQuery(): AsyncGenerator<never, void, unknown> {
