@@ -14,4 +14,12 @@ export interface PGliteDialectConfig {
    * If a function is provided, it's called once when the first query is executed.
    */
   PGlite?: PGliteOrPromise
+  /**
+   * Called once for each created connection.
+   */
+  onCreateConnection?: (connection: DatabaseConnection) => Promise<void>
+  /**
+   * Called every time a connection is acquired from the pool.
+   */
+  onReserveConnection?: (connection: DatabaseConnection) => Promise<void>
 }

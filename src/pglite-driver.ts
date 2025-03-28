@@ -37,6 +37,13 @@ export class PGliteDriver {
     }
     const connection = new PGliteConnection(this.#client)
 
+    if (this.#config.onCreateConnection) {
+      await this.#config.onCreateConnection(connection)
+    }
+    if (this.#config.onReserveConnection) {
+      await this.#config.onReserveConnection(connection)
+    }
+
     return connection
   }
 
