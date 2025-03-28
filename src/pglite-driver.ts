@@ -24,7 +24,14 @@ export class PGliteDriver {
   }
 
   async acquireConnection(): Promise<DatabaseConnection> {
-    return new PGliteConnection(this.#client)
+    if (!this.#client) {
+      throw new Error(
+        'PGlite client is not initialized. init() must be called first.',
+      )
+    }
+    const connection = new PGliteConnection(this.#client)
+
+    return connection
   }
 
   async beginTransaction(
