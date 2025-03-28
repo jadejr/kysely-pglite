@@ -62,7 +62,7 @@ export class PGliteDriver {
   async releaseConnection(_connection: DatabaseConnection): Promise<void> {}
 }
 
-class PGliteConnection implements DatabaseConnection {
+export class PGliteConnection implements DatabaseConnection {
   #client: PGlite
 
   constructor(client: PGlite) {
