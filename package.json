@@ -21,6 +21,7 @@
     "dev": "tsc --watch",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "pnpm run build",
+    "prepare": "pnpm run build",
     "format": "prettier ./src --write",
     "test": "vitest"
   },
