@@ -1,7 +1,8 @@
-import { globby } from 'globby'
+import { basename, resolve } from 'node:path'
 import { createJiti } from 'jiti'
 import { Kysely, Migrator, type Migration } from 'kysely'
 import { all, objectify } from 'radash'
+import { glob } from 'tinyglobby'
 
 const jiti = createJiti(import.meta.filename, {
   // prevent files from getting cached so the `watch` feature works.
@@ -9,24 +10,22 @@ const jiti = createJiti(import.meta.filename, {
 })
 
 export function createMigrator(db: Kysely<any>, migrationsPath: string) {
+  const path = resolve(migrationsPath)
   return new Migrator({
     db,
     provider: {
       async getMigrations() {
-        const files = await globby(migrationsPath, {
-          expandDirectories: {
-            files: ['*.ts', '*.js'],
-          },
-
+        const files = await glob('**/*.{js,ts}', {
+          cwd: path,
+          expandDirectories: true,
           ignore: ['**/types.ts', '**/*.d.ts'],
-          objectMode: true,
           absolute: true,
         })
 
         const migrations = objectify(
           files,
-          (f) => f.name,
-          (f) => jiti.import(f.path),
+          (f) => basename(f),
+          (f) => jiti.import(f),
         )
 
         // TODO: improve validating imported functions
