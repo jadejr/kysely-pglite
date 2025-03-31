@@ -88,5 +88,8 @@
       "inflight": "*"
     }
   },
-  "author": "Daniel Sandiego"
+  "author": "Daniel Sandiego",
+  "publishConfig": {
+    "access": "public"
+  }
 }
