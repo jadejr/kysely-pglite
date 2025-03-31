@@ -1,8 +1,8 @@
 {
-  "name": "kysely-pglite",
-  "version": "0.6.1",
-  "description": "Kysely dialect for @electric-sql/pglite",
-  "repository": "https://github.com/dnlsandiego/kysely-pglite",
+  "name": "@jadejr/kysely-pglite",
+  "version": "1.0.0",
+  "description": "Kysely dialect for @electric-sql/pglite (temporary fork https://github.com/dnlsandiego/kysely-pglite)",
+  "repository": "https://github.com/jadejr/kysely-pglite",
   "keywords": [
     "@electric-sql/pglite",
     "kysely",
@@ -15,7 +15,6 @@
   "type": "module",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "packageManager": "pnpm@8.14.2",
   "scripts": {
     "build": "rimraf dist && tsc",
     "dev": "tsc --watch",
