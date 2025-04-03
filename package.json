@@ -44,11 +44,12 @@
   },
   "peerDependencies": {
     "@electric-sql/pglite": "*",
-    "kysely": "https://pkg.pr.new/kysely-org/kysely/kysely@2b7007e"
+    "kysely": "*"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.13.14",
+    "kysely": "https://pkg.pr.new/kysely-org/kysely/kysely@2b7007e",
     "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
     "tsx": "^4.19.3",
