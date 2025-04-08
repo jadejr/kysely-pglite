@@ -40,6 +40,12 @@
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
       }
+    },
+    "./codegen": {
+      "import": {
+        "types": "./dist/codegen.d.ts",
+        "default": "./dist/codegen.js"
+      }
     }
   },
   "peerDependencies": {
